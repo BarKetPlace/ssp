@@ -27,4 +27,11 @@ end
 fprintf('The signal is filtered with a cutoff frequency from 100 to 500 Hz with step of 50 Hz\n') ;
 fprintf('We start to distinguish words from 250 Hz but the full message is clear at 400 Hz\n')
 
-%% 
+%% 3- Voiced and Unvoiced Speech Sounds
+close all
+clc
+
+figure,
+plot(male_short)
+
+
