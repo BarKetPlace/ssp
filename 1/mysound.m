@@ -8,7 +8,7 @@ function mysound(data, fs)
 %
 %         MYSOUND(Y,FS) plays the sound at a sample rate of FS Hz.
 %         
-%         © Jan Plasberg and Jonas Samuelsson, 2005
+%         ï¿½ Jan Plasberg and Jonas Samuelsson, 2005
 
 % playout routine for windows (and unix)
 
@@ -38,6 +38,8 @@ end;
 
 if ispc
   playout=playout/2^15;
+%   display_(playout,fs_play,1,0);
+%   drawnow
   sound(playout,fs_play);
 else
    eval(playcommand);
