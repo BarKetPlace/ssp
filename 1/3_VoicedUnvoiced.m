@@ -6,10 +6,8 @@ clc
 load assignment1.mat
 S = male_short;
 Fs = 8000;
-scaling_f = Fs;
+scaling_f = 1;
 mute = 0;
-% mysound(male_short,Fs);
-% display_(male_short,Fs,1,0);
 
 figure, subplot(2,1,1)
 spectrogram(S, 200, 50, 200, Fs, 'yaxis'); colorbar('off');
@@ -19,14 +17,28 @@ display_(S, Fs, scaling_f, mute);
 %%
 
 %% DFT
+close all
+
 % x is a vector of speech, N is the frame length (must be even),
 % S is the first sample of the frame to be analyzed
 
+%UnVoiced : [f] [k] [p][s][t][tch][th][ss]
+% Sound s from the word "moSt"
 
-S=1;
+Suv=5900;
 x = male_short;
-N = 100;
-xf = x(S:S+N-1).*hanning(N);
-X = fft(xf);
-figure(1); clf;
-plot(10*log10(abs(X(1:N/2+1)).^2));
+Nuv = 1000;
+xfuv = x(Suvcd:Suv+Nuv-1).*hanning(Nuv);
+Xuv = fft(xfuv);
+figure,
+plot(10*log10(abs(Xuv(1:Nuv/2+1)).^2));
+title('UnVoiced');
+%Voiced : [v][g][b][z][d][>th<is]
+
+Sv=122;
+Nv =450;
+xfv = x(Sv:Sv+Nv-1).*hanning(Nv);
+Xv = fft(xfv);
+figure, 
+plot(10*log10(abs(Xv(1:Nv/2+1)).^2));
+title('Voiced');
