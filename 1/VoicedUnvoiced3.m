@@ -69,8 +69,10 @@ for itype = 1:2
         legendM{indM} = ['Enveloppe, Prediction order :: ' num2str(M_(indM))];
         % M is the prediction order
         c = xcorr(xf, xf, M);
+        
         [a, e]= levinson(c(M+1:2*M+1)); % a is a vector always starting
         %with a 1.
+
         a = a(:); % Make a a column vector
         h = zeros(N,1);
         for k=0:N-1
