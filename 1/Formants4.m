@@ -16,7 +16,7 @@ clc
 
     %%%% PARAMETERS TO SET %%%%
 signal = male_short ;                   % choose the signal to analyse
-N = 1000 ;                              % window length
+N = 200 ;                              % window length
 M = 10  ;                               % prediction order
 
     %%%% OTHER PARAMETERS %%%%
