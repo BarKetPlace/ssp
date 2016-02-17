@@ -30,6 +30,11 @@ S = zeros(winlen / 2 + 1, numwin) ;
 n1 = 1;
 n2 = winlen;
 
+    % set parameters for plot
+timewin = winlen/(1000*Fs) ;            % ms
+Xtim = linspace(0, timewin, winlen) ;   % abscissa for time plot
+Xfreq = linspace(-Fs/2, Fs/2, winlen) ; % abscissa for freq plot
+
     % loop over all windows but the last one which is always smaller than
     % the rest therefore cannot be put inside the matrix S
 for n= 1 : numwin - 1
@@ -38,19 +43,22 @@ for n= 1 : numwin - 1
     
         % compute DFT
     X = fft(xf.*hanning(winlen));
-    S(:, n) = 10*log10(abs(X(1:winlen / 2 + 1).^2)) ;
+    S(:, n) = 10*log10(abs(X(winlen/2:end).^2))' ;
     
         % show DFT + time signal of window
     figure(1), clf
     subplot(211)
-    plot(xf)
+    plot(Xtim, xf)
     title('Time plot of window')
-    axis([1 winlen min(x) max(x)])
+    xlabel('Time (ms)')
+    axis([0 timewin min(x) max(x)])
     
     subplot(212)
-    plot(10*log10(abs(X.^2)));
-    axis([1 winlen -25 125])
-    title('DFT of window')    
+    plot(Xfreq, 10*log10(abs(X.^2)));
+    axis([-Fs/2 Fs/2 -25 125])
+    title('DFT of window')
+    xlabel('Frequency (Hz)')
+    ylabel('Amplitude (dB)')
     
     pause(0.01)
     
@@ -59,10 +67,27 @@ for n= 1 : numwin - 1
     n2 = n2 + uplen;
 end
 
+%% spectogramme
+close all
+
     % plot spectrogramme
 figure,
 colormap(gray)
-imagesc(flipud(-S));
+imagesc([0 N / (1000*Fs)], [0 Fs/2], flipud(S));
+c = colorbar;
+c.Label.String = 'Values (dB)';
+title('Spectrogramme')
+ylabel('Frequency (Hz)')
+xlabel('Time (ms)')
+
+
+%% test of function
+close all
+clc
+
+bits = 12 ;
+
+myspectrogram(male_short, Fs, 2^bits, 2^(bits-3)) ;
 
 
 
