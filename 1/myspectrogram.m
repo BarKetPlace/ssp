@@ -14,8 +14,15 @@ lastwin = rem( N - winlen, uplen) ;
     % get number of windows
 numwin = (N - winlen - lastwin) / uplen + 2 ;
 
+    % set size of matrix S
+if winlen / Fs *1000 <= 5
+    lengthS = floor(N / 2) ;
+else
+    lengthS = winlen / 2 ;
+end
+
     % create spectogram matrix S
-S = zeros(winlen / 2 + 1, numwin) ;
+S = zeros(lengthS, numwin) ;
 
     % initialize boundaries of window
 n1 = 1;
@@ -28,8 +35,8 @@ for n= 1 : numwin - 1
     xf = x(n1:n2) ;
     
         % compute DFT and store it in matrix
-    X = fft(xf.*hanning(winlen), N);
-    S(:, n) = 10*log10(abs(X(winlen/2:end).^2))' ;
+    X = fft(xf.*hanning(winlen), lengthS*2);
+    S(:, n) = 10*log10(abs(X(lengthS+1:end).^2))' ;
     
         % update boundaries of window
     n1 = n1 + uplen;
@@ -39,8 +46,8 @@ end
     % plot spectrogramme
 figure,
 colormap(bone)
-imagesc([0 1000*N/Fs], [Fs/2 0], flipud(S));
-c = colorbar;
+imagesc([0 1000*N/Fs], [Fs/2 0], flipud(-S));
+% c = colorbar;
 c.Label.String = 'Values (dB)';
 title('Spectrogram')
 ylabel('Frequency (Hz)')

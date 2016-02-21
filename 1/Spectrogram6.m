@@ -4,6 +4,7 @@ close all
 clc
 
 load assignment1.mat ;
+Fs = 8000 ;
 
 %% ANSWER TO QUESTIONS 1) AND 2)
 close all
@@ -85,10 +86,13 @@ xlabel('Time (ms)')
 close all
 clc
 
-bits = 12 ;
-
+    % Narrowband 
+bits = 9 ;
 myspectrogram(male_short, Fs, 2^bits, 2^(bits-3)) ;
 
+    % Wideband
+bits = 5 ;
+myspectrogram(male_short, Fs, 2^bits, 2^(bits-3)) ;
 
 
 
