@@ -12,7 +12,7 @@ soundsc(female,Fss);
 close all
 clc
 fprintf('Cut off frequency     \n');
-for i=400:500:8000
+for i=1200:300:2000
         % set cut off frequency
     Fc = i / Fs ;      % normalized cut off frequency
 

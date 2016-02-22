@@ -13,7 +13,7 @@ clc
     % get input variables
 x = male_short ;            % signal
 winlen = 256 ;              % window length
-uplen = 32 ;               % overlap factor [0,1] => percentage of winlen
+uplen = 32 ;               % overlap factor
 
     % get length
 N = length(x) ;

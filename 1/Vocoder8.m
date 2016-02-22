@@ -24,4 +24,6 @@ M = 1;
 
 s = synthesis1(E, ZC, V, A, P, ulen);
 figure, plot(s); title(['ulen = ' num2str(ulen)]);
-% mysound(s,Fs);
+mysound(s,Fs);
+
+

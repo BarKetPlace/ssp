@@ -1,26 +1,24 @@
+%% Load stuff
 clear all
 close all
 clc
 
-
 load assignment1.mat
-
-S = male_short;
 Fs = 8000;
-scaling_f = 1;
-mute = 1;
+%%
+close all
+clc
 
-x = S;
-%Frame length 
-flen=30;%ms
-alen = flen/1000*Fs;
-voicedthreshold = .4; %Thresholdvoiced/unvoiced
-naf = ceil(length(x)/alen);
+	% set parameters
+x = female_short ;
+flen=30 ;               %ms
+alen = flen/1000*Fs ;   % size of analysis window
+ulen = 1 ;              % length of update
+M = 9 ;                 % order for LP analysis
 
-ulen =1;
-M = 9;
+[E, ZC, V, A,P] = analysis(x, alen, ulen, M, Fs);
 
-[E, ZC, V, A,P]=analysis(x,alen,ulen,voicedthreshold,M);
+
 %% 
 close all
 figure, plot(ZC); hold on; stem(V*max(ZC(:)));
