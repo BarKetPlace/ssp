@@ -8,7 +8,7 @@ load assignment1.mat
 S = male_short;
 Fs = 8000;
 scaling_f = 1;
-mute = 0;
+mute = 1;
 
 x = S;
 %Frame length 
