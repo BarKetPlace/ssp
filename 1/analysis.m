@@ -1,4 +1,4 @@
-function [E, ZC, V, A, P] = analysis(x, alen, ulen, M, Fs)
+function [E, ZC, V, A, P] = analysis(x, alen, ulen, M, Fs, en_plots)
 
     % get length
 N = length(x) ;            % samples
@@ -67,6 +67,8 @@ for n = 1 : naf
     n2 = n2 + ulen;
 end
 
+
+if (en_plots)
     % plot results
 x1 = linspace(0, ms, naf) ;
 figure(1);clf;
@@ -83,30 +85,32 @@ subplot(3,2,2)
 plot(x1, sqrt(E)) 
 axis([1 ms min(sqrt(E)) max(sqrt(E))]);
 title('Standard deviation');
-xlabel('time (ms)')
+xlabel('time (sample)')
 
         % Plot voiced/unvoiced decision
 subplot(3,2,3)
 plot(x1, V) 
 axis([1 ms 0 1.5]);
 title('Voiced (1) unvoiced(0)');
-xlabel('time (ms)')
+xlabel('time (sample)')
 
         % Plot the normalized number of zero-crossings
 subplot(3,2,4)
 plot(x1, ZC); hold on;
-plot(length(ZC)*[0 1], voicedthreshold*[1 1], '-r');
+plot(length(x1)*[0 1], voicedthreshold*[1 1], '-r');
 axis([1 ms min(ZC) max(ZC)]);
 title('Normalized number of ZC');
-xlabel('time (ms)')
+xlabel('time (sample)')
 
         % Plot the fundamental frequency in Hz
+        ffreq = Fs./P;
 subplot(3,2,5)
-plot(x1, P) 
-axis([1 ms min(P) max(P)])
+
+plot(x1, ffreq) 
+axis([1 ms min(ffreq) max(ffreq)])
 ylabel('Frequency (Hz)');
 title('Fundamental frequency');
-xlabel('time (ms)')
+xlabel('time (sample)')
 
         % Illustrate the vocal tract envelope in a spectrogram style!
 subplot(3,2,6)
@@ -118,5 +122,6 @@ S = flipud(S);
 colormap(gray);
 imagesc(S); 
 title('Vocal tract envelope');
+end
 
 end

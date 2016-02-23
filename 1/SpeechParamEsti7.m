@@ -10,16 +10,20 @@ close all
 clc
 
 	% set parameters
-x = female_short ;
+x = male_short ;
 flen=30 ;               %ms
 alen = flen/1000*Fs ;   % size of analysis window
-ulen = 1 ;              % length of update
+ulen = 32 ;              % length of update
 M = 9 ;                 % order for LP analysis
+en_plots=1;
 
-[E, ZC, V, A,P] = analysis(x, alen, ulen, M, Fs);
+
+[E, ZC, V, A,P] = analysis(x, alen, ulen, M, Fs,en_plots);
 
 
 %% 
+
+voicedthreshold = .3;
 close all
 figure, plot(ZC); hold on; stem(V*max(ZC(:)));
 
