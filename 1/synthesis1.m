@@ -3,7 +3,7 @@ function s = synthesis1(E, ZC, V, A, P, ulen)
 % but here we only use A!
 n_frames = size(A,1); % Assuming filter coefficients are stored row-wise
 % Create a pulse train excitation:
-cp = 100; % Constant pitch period in samples
+cp = 800; % Constant pitch period in samples
 pexc = zeros(n_frames*ulen, 1);
 pexc(1:cp:end) = 1;
 % Create noise excitation:

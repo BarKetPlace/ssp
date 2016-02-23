@@ -11,8 +11,8 @@ mute = 0;
 x = male_short ;
 flen=30 ;               %ms
 alen = flen/1000*Fs ;   % size of analysis window
-ulen = 240 ;           % length of update
-M = 10;           % order for LP analysis
+ulen = 70 ;           % length of update
+M = 50;           % order for LP analysis
 
 en_plots=1;
 % mysound(x,Fs);
