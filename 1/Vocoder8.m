@@ -11,15 +11,15 @@ mute = 0;
 x = male_short ;
 flen=30 ;               %ms
 alen = flen/1000*Fs ;   % size of analysis window
-ulen = alen ;           % length of update
-M = 500                % order for LP analysis
+ulen = 240 ;           % length of update
+M = 10;           % order for LP analysis
 
 en_plots=1;
 % mysound(x,Fs);
 [E, ZC, V, A,P]=analysis(x, alen, ulen, M, Fs, en_plots);
 
-s = synthesis1(E, ZC, V, A, P, ulen);
-s = s/max(s)*max(x);
+s = synthesis2(E, ZC, V, A, P, ulen);
+% s = s/max(s)*max(x);
 
 figure, 
 plot(x); hold on;
