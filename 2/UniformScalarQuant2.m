@@ -4,17 +4,17 @@ clc
 
 load assignment2.mat
 
-in = male8; %Signal
-m=0; %Mean of the possible values 
-xmax = max(male8);
-n_bits = 3;
-en_plots = 0; %Enables plotsin functions /!\ it is very expensive /!\
+in = [-6:.01:6]'; %Signal must be a columns
+m=0; %Offset of the quantizer recosntruction levels =0 ->midrise quantizer =delta/2 ->midtread
+xmax = 4;
+n_bits = 2;
+en_plots = 1; %Enables plot in functions
 
 [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
 
 outq = sq_dec(idx, n_bits, xmax, m);
 
 
-figure, plot(in); hold on; plot(outq);
-title('Quantization result');
-legend('USQ input', 'USQ output');
+figure, plot(in,outq);
+title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
+xlabel('Input');ylabel('Output');

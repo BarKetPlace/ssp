@@ -4,5 +4,17 @@ clc
 
 load assignment2.mat
 
-in = male8;
-m=0;
+in = ; %Signal
+m=0; %Offset of the quantizer recosntruction levels =0 ->midrise quantizer =delta/2 ->midtread
+xmax = max(male8);
+n_bits = 3;
+en_plots = 0; %Enables plot in functions
+
+[ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
+
+outq = sq_dec(idx, n_bits, xmax, m);
+
+
+figure, plot(in); hold on; plot(outq);
+title('Quantization result');
+legend('USQ input', 'USQ output');
