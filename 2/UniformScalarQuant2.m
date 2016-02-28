@@ -5,16 +5,38 @@ clc
 load assignment2.mat
 
 in = [-6:.01:6]'; %Signal must be a columns
-m=0; %Offset of the quantizer recosntruction levels =0 ->midrise quantizer =delta/2 ->midtread
+nbits_tab = 1:10;
+OUT = zeros(length(nbits_tab), length(in));
+
+m_tab=[0 1.5]; %Offset of the quantizer recosntruction levels =0 ->midrise quantizer =delta/2 ->midtread
+D = zeros(length(nbits_tab),length(m_tab));
+PSNR = zeros(length(nbits_tab),length(m_tab));
+for im = 1:length(m_tab)
+m = m_tab(im);
+
+for i_bits = 1:length(nbits_tab)
+n_bits = nbits_tab(i_bits);
+fprintf('%d bits\n', n_bits);
 xmax = 4;
-n_bits = 2;
-en_plots = 1; %Enables plot in functions
+% n_bits = 2;
+en_plots = 0; %Enables plot in functions
 
 [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
 
-outq = sq_dec(idx, n_bits, xmax, m);
+OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
+end
+IN = ones(length(nbits_tab),1)*in';
+D(:,im) = 1/length(in)*sum( (IN-OUT).^2,2);
 
+end
+figure,
+plot(nbits_tab, D(:,1),'LineWidth',2);hold on;
+plot(nbits_tab, D(:,2),'LineWidth',2);
+legend(['m= ' num2str(m_tab(1))] ,['m= ' num2str(m_tab(2))]);
+xlabel('Rate (bits)'); ylabel('Distorsion');
+ title({'USQ'; 'Rate vs Distorsion'});
 
-figure, plot(in,outq);
-title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
-xlabel('Input');ylabel('Output');
+% 
+% figure, plot(in,outq);
+% title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
+% xlabel('Input');ylabel('Output');
