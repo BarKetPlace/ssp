@@ -1,0 +1,8 @@
+clear all
+close all
+clc
+
+load assignment2.mat
+
+in = male8;
+m=0;

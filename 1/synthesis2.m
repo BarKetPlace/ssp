@@ -14,7 +14,7 @@ Z = [];
 s = zeros(n_frames*ulen,1);
 for n=1:n_frames
     % Filter the excitation through the production (vocal tract) filter:
-    [s(n1:n2), Z] = varifilter(1, A(n,:), pexc(n1:n2), Z);
+    [s(n1:n2), Z] = varifilter(1, A(n,:), nexc(n1:n2), Z);
     
     Es(n) = 1/(n2-n1+1)*sum(s(n1:n2).^2);
     %To normalize we resolve sum((s(n1:n2)*corr).^2) = E(n)
