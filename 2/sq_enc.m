@@ -1,8 +1,8 @@
 function [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots)
 %function [ idx ] = sq_enc(in, n_bits, xmax, m)
-%   
-inlen = length(in);
-idx = zeros(inlen,1);
+%   OUTPUT: idx is a column vector
+inlen = length(in);%size of the input signal
+idx = zeros(inlen,1);%will receive the iindex
 L = 2^n_bits; % Number of quantization interval
 delta = 2*xmax/L;%Step size
 val = m-xmax+delta/2:delta:m+xmax-delta/2; %The output possible values
@@ -18,7 +18,7 @@ if en_plots
 end
 
 %To get the index we will substract one sample by all the quantization
-%value and find the minimum.
+%values and find the minimum.
 columnIn = in*ones(1,length(val));%Dim inlen x L : contains  L similar columns
 rowVal = ones(length(in),1)*val;%Dim inlen x L   : contains inlen similar rows 
 Sub = abs(columnIn-rowVal);
