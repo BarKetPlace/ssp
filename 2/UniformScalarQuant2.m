@@ -20,22 +20,24 @@ PSNR = zeros(length(nbits_tab),length(m_tab));
 
 en_plots = 0; %Enables plot in functions
 
-for im = 1:length(m_tab)
-m = m_tab(im);
-
-for i_bits = 1:length(nbits_tab)
-n_bits = nbits_tab(i_bits);
-fprintf('%d bits\n', n_bits);
-
-% n_bits = 2;
-
-[ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
-
-OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
-end
-
-D(:,im) = 1/length(in)*sum( (IN-OUT).^2,2);
-
+for im = 1:length(m_tab)%For all offset
+    m = m_tab(im);
+    
+    for i_bits = 1:length(nbits_tab)%For all bit rate we want to try
+        n_bits = nbits_tab(i_bits);
+        fprintf('%d bits\n', n_bits);
+        
+        % n_bits = 2;
+        %Find the index of the samples
+        [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
+        
+        %Convert the index into actual values
+        OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
+    end
+    
+    %Computes the distorsion
+    D(:,im) = 1/length(in)*sum( (IN-OUT).^2,2);
+    
 end
 
 figure, %Plot Rate vs distorsion curve with m_tab of dimension 2
