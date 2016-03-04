@@ -13,7 +13,8 @@ if en_plots
         plot([0 inlen],val(i)*[1 1],'-r');
         hold on;
     end
-    title(['Quantization levels. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
+    title(['USQ: Output levels. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
+    xlabel('Time (Samples)'); ylabel('Signal value');
 end
 
 %To get the index we will substract one sample by all the quantization
