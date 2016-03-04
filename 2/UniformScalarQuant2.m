@@ -48,7 +48,7 @@ xlabel('Rate (bits)'); ylabel('Distorsion');
  title({'USQ'; 'Rate vs Distorsion'});
  
 % soundsc(in,8000);
-soundsc(OUT(5,:),8000);
+soundsc(OUT(3,:),8000);
 
 % figure, plot(in,outq);
 % title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
