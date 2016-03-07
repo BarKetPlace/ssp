@@ -2,26 +2,33 @@ close all
 clear all
 clc
 
+    % load stuff
 load assignment2.mat
+Fs = 8000 ;     % sampling frequency
 
-Fs = 8000;
-scaling_f = 1;
-mute = 0;
+    %% quantize gain
+close all
+clc
+
 	% set parameters
-x = male8 ;
-flen=30 ;               %ms
-alen = flen/1000*Fs ;   % size of analysis window
-ulen = 120 ;             % length of update
-M = 120;                 % order for LP analysis
+x    =  male8 ;
+flen =  30 ;                            % ms
+alen =  flen/1000*Fs ;                  % size of analysis window
+ulen =  120 ;                           % length of update
+M    =  120;                            % order for LP analysis
+ms   =  (length(x) / Fs) * 1000 ;       % milliseconde
 
-en_plots=1;
-% soundsc(x,Fs);
-[E, V, A,P]=analysis(x, alen, ulen, M);%, Fs);%, en_plots);
-s = synthesis(E, V, A, P, ulen);
-% s = s/max(s)*max(x);
+    % Analysis
+[E, V, A, P]=analysis(x, Fs, alen, ulen, M, 0) ;
 
-figure, 
-plot(x); hold on;
-plot(s); title(['ulen = ' num2str(ulen)]);
-legend('Initial', 'Vocoded');
-soundsc(s,Fs);
+    % plot gain
+plot(linspace(0, ms, length(E)), E) ;
+axis([1 ms min(E) max(E)]);
+title('Gain');
+xlabel('time (ms)')
+
+    % plot histogram of gain
+nbits = 5 ;
+figure
+a = histogram(E, 2^nbits);
+

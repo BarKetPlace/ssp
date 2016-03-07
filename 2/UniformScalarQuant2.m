@@ -15,9 +15,6 @@ m_tab=[0];% 1.5]; %Offset of the quantizer reconstruction levels =0 ->midrise qu
 D = zeros(length(nbits_tab),length(m_tab));%Distorsion
 PSNR = zeros(length(nbits_tab),length(m_tab)); 
 
-
-
-
 en_plots = 0; %Enables plot in functions
 
 for im = 1:length(m_tab)%For all offset
@@ -53,3 +50,18 @@ soundsc(OUT(3,:),8000);
 % figure, plot(in,outq);
 % title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
 % xlabel('Input');ylabel('Output');
+
+%%
+close all
+clc
+
+x = [ -6:0.1:6 ]' ;
+for bits = 2:10
+    index = sq_enc(x, bits, 4, 0, 0) ;
+
+    y = sq_dec(index, bits, 4, 0) ;
+
+    plot(x, y)
+    pause(0.5)
+end
+

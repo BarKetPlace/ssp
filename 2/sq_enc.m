@@ -1,6 +1,7 @@
 function [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots)
 %function [ idx ] = sq_enc(in, n_bits, xmax, m)
 %   OUTPUT: idx is a column vector
+
 inlen = length(in);%size of the input signal
 idx = zeros(inlen,1);%will receive the iindex
 L = 2^n_bits; % Number of quantization interval

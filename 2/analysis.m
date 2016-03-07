@@ -1,4 +1,4 @@
-function [E, V, A, P] = analysis(x, N, U, M)
+function [E, V, A, P] = analysis(x, Fs, N, U, M, en_plots)
 
 % [E, V, A, P] = analysis(x, N, U, M) extracts vocoder parameters E, V, A,
 % and P from the speech signal x on a frame by frame basis. N is the
@@ -16,9 +16,11 @@ function [E, V, A, P] = analysis(x, N, U, M)
 % Note that the pitch estimator uses a frame length that is set inside this
 % function (the variable Np). All other estimators are based on N samples.
 % 
-% © Jonas Samuelsson, 2005
+% ï¿½ Jonas Samuelsson, 2005
   
   n_frames = floor((length(x)-N+U)/U);
+  ms = (length(x) / Fs) * 1000 ;       % milliseconde
+  x1 = linspace(0, ms, n_frames) ;
 
   s = 1; % Index for the start of the analysis frame
   e = N;% Index for the end of the analysis frame
@@ -91,28 +93,43 @@ function [E, V, A, P] = analysis(x, N, U, M)
     e = e + U;
   end
     
+if en_plots
   figure(1);clf;
+    % plot the signal
   subplot(3,2,1)
-  plot(x)
-  axis([1 length(x) min(x) max(x)]);
+  plot(linspace(0, ms, length(x)), x)
+  axis([1 ms min(x) max(x)]);
+  title('Time plot of signal');
+  xlabel('time (ms)')
 
+    % plot the gain
   subplot(3,2,2)
-  plot(E)
-  axis([1 length(E) min(E) max(E)]);
+  plot(x1, E)
+  axis([1 ms min(E) max(E)]);
+  title('Gain');
+  xlabel('time (sample)')
   
+    % plot the voiced/unvoiced
   subplot(3,2,3)
-  plot(V, '.')
-  axis([1 length(V) min(V) max(V)]);
+  plot(x1, V)
+  axis([1 ms 0 1.5]);
+  title('Voiced (1) unvoiced(0)');
+  xlabel('time (sample)')
 
   subplot(3,2,4)
-  plot(ZC)
-  axis([1 length(ZC) min(ZC) max(ZC)]);
+  plot(x1, ZC)
+  axis([1 ms min(ZC) max(ZC)]);
+  title('Normalized number of zero-crossings');
+  xlabel('time (sample)')
 
   subplot(3,2,5)
   F = 8000./P;
-  plot(F)
-  axis([1 length(F) 0 600]);
-  
+  plot(x1, F)
+  axis([1 ms 0 max(F)]);
+  ylabel('Frequency (Hz)');
+  title('Fundamental frequency');
+  xlabel('time (sample)')
+
   subplot(3,2,6)
   S = zeros(512, n_frames);
   for n=1:n_frames
@@ -121,6 +138,8 @@ function [E, V, A, P] = analysis(x, N, U, M)
   S = flipud(S);
   colormap(gray);
   imagesc(S);  
+  title('Vocal tract envelope');
+end
     
   
 function p = pitch1(in)
