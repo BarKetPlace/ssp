@@ -6,6 +6,7 @@ inlen = length(in);%size of the input signal
 idx = zeros(inlen,1);%will receive the iindex
 L = 2^n_bits; % Number of quantization interval
 delta = 2*xmax/L;%Step size
+% val = m-xmax:delta:m+xmax; %The output possible values
 val = m-xmax+delta/2:delta:m+xmax-delta/2; %The output possible values
 
 if en_plots
