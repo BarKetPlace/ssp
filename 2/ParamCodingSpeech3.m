@@ -79,13 +79,13 @@ clc
 fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
 fig2 = figure('Position',[scrsz(3)/2 1 scrsz(3)/2 scrsz(4)]) ;
 
-for nbits_gain = 8:-1:2    
+for nbits_E = 8:-1:2    
         % display bits
-    fprintf(['Bits = ', num2str(nbits_gain), '\n'])
+    fprintf(['Bits = ', num2str(nbits_E), '\n'])
     
         % plot histogram
     figure(fig1) ;
-    a = histogram(log(E), 2^nbits_gain) ;
+    a = histogram(log(E), 2^nbits_E) ;
         % get m and xmax
     m = mean(a.BinEdges) ;
     xmax = max(a.BinEdges)-m ;
@@ -96,15 +96,15 @@ for nbits_gain = 8:-1:2
     hold off
 
         % quantize
-    idx = sq_enc(log(E), nbits_gain, xmax, m, 0) ;
-    quantE = sq_dec(idx, nbits_gain, xmax, m) ;
+    idx = sq_enc(log(E), nbits_E, xmax, m, 0) ;
+    quantE = sq_dec(idx, nbits_E, xmax, m) ;
 
         % plot the result and compare to quantization values and original
         % signal
     figure(fig2)
     plot(E); hold on; plot(exp(quantE)) ; hold off ;
     legend('Gain', 'Quantized gain')
-    title(['Quantization of log of gain with bits = ', num2str(nbits_gain)])
+    title(['Quantization of log of gain with bits = ', num2str(nbits_E)])
     
         % synthesis with parameters
     x_synth = synthesis(exp(quantE), V, A, P, ulen) ;
@@ -122,17 +122,72 @@ fprintf('Can''t hear a difference after 4 bits\n') ;
 %%%%% Commentary
 % 
 % better with log
-% plan : using log quantization with 4 bits
+% plan : using log quantization with 3 bits
 
     %% 3.2 - Quantize Pitch & Voiced/Unvoiced
 close all
 clc
 
-%%%% code Voiced/Unvoiced with a simple 1 bit quantizer since it's a
-%%%% binary decision
+%%%% Voiced/Unvoiced is already a 1 bit signal since it represents a
+%%%% binary decision, we can't quantize it more without loosing crucial
+%%%% information
 
-idx = sq_enc(V, 1, 1, 0.5, 1) ;
-quantV = sq_dec(idx, 1, 1, 0.5) ;
+nbits_V = 1 ;
 
-figure
-plot(quantV)
+%%%% in order to quantize the Pitch correctly we are going to consider the
+%%%% logarithmic human perception of sounds
+
+   % This vector contains the frequencies of the scales 0 to 4
+frequencies = (-57:14)/12  ;
+x = 2*ones(1,length(frequencies)) ;
+frequencies = (x.^frequencies)*440 ;
+          
+
+    % create figures
+fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
+fig2 = figure('Position',[scrsz(3)/2 1 scrsz(3)/2 scrsz(4)]) ;
+
+for nbits_P = 8:-1:1    
+        % display bits
+    fprintf(['Bits = ', num2str(nbits_P), '\n'])
+    
+        % filter P
+    
+        % plot histogram
+    figure(fig1) ;
+    a = histogram(log(P), 2^nbits_P) ;
+        % get m and xmax
+    m = mean(a.BinEdges) ;
+    xmax = max(a.BinEdges)-m ;
+        % plot vertical lines
+    hold on
+    plot([m-xmax, m-xmax], [0 max(a.Values)], 'red', [m, m], [0 max(a.Values)], 'red', [m+xmax, m+xmax], [0 max(a.Values)], 'red') ;
+    text(m-xmax, max(a.Values), 'm-xmax'), text(m, max(a.Values), 'm'), text(m+xmax, max(a.Values), 'm+xmax')
+    hold off
+
+        % quantize
+    idx = sq_enc(log(P), nbits_P, xmax, m, 0) ;
+    quantP = sq_dec(idx, nbits_P, xmax, m) ;
+
+        % plot the result and compare to quantization values and original
+        % signal
+    figure(fig2)
+    plot(log(P)); hold on; plot(quantP) ; hold off ;
+    legend('Gain', 'Quantized gain')
+    title(['Quantization of log of pitch with bits = ', num2str(nbits_P)])
+    
+        % synthesis with parameters
+    x_synth = synthesis(E, V, A, exp(quantP) , ulen) ;
+    
+        % play
+    soundsc(x_synth, Fs) ;
+    pause(ms/1000)
+        
+end
+
+% we notice a clear change in pitch under 4 bits quantization, it seems
+% that under 16 levels of quantization we deteriorate the signal too much
+
+    %% 3.3 - Quantizing the LP parameters
+    
+    
