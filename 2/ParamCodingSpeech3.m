@@ -16,7 +16,7 @@ x    =  male8 ;
 flen =  30 ;                            % ms
 alen =  flen/1000*Fs ;                  % size of analysis window
 ulen =  120 ;                           % length of update
-M    =  120;                            % order for LP analysis
+M    =  10;                            % order for LP analysis
 ms   =  (length(x) / Fs) * 1000 ;       % milliseconde
 D   =   [] ;                            % distortion 
 
@@ -190,4 +190,105 @@ end
 
     %% 3.3 - Quantizing the LP parameters
     
+%%%%%% CODE FUNCTION
+
+    % create codeA vector
+codeA = zeros(length(A), 2) ;
+
+    % for each polynomial vectors
+for i = 1:length(A)
+   
+        % get lsf
+    lsf = poly2lsf(A(i,:))' ;
+    
+        % get distance between lsf and codebook
+    dist = (1/M) * sum((ones(2^10, 1)*lsf - lsfCB1).^2, 2) ;
+    
+        % get index of smallest distance
+    indx1 = find( dist == min(dist)) ;
+    
+        % get residual and code it same way as before but with lsfCB2
+    res = lsf - lsfCB1(indx1, : ) ;
+    dist = (1/M) * sum((ones(2^10, 1)*res - lsfCB2).^2, 2) ;
+    indx2 = find( dist == min(dist)) ;
+    
+        % update codeA vector with indexes from both codebooks
+    codeA(i, :) = [indx1, indx2] ;        
+end
+
+%%%%% DECODE FUNCTION
+
+    % create vector Aq
+Aq = zeros(size(A)) ;
+
+for i = 1:length(codeA)
+   
+        % get indexes
+    indxs = codeA(i, :) ;
+    
+        % get lsf et residual
+    lsf = lsfCB1(indxs(1), :) ;
+    res = lsfCB2(indxs(2), :) ;
+    lsf = sort(lsf + res) ;         % use sort to make sure it represents a minimum phase whitening filter
+
+        % call lsf2poly and store the result
+    Aq(i, :) = lsf2poly(lsf) ;
+end
+
+    %% 3.4 - Optimizing the bit allocation
+close all
+clc
+
+    % set quantization parameters
+nbits_E = 3 ;                       % 2 bits for gain
+nbits_P = 4 ;                       % 4 bits for pitch
+nbits_V = 1 ;                       % 1 bit for Voiced/Unvoiced
+nbits_LP = length(A) * 2 * M ;      % fixed number of bits for LP parameters quantization
+                                    % depends on number of window and LP order
+
+    % get rate
+nbits_total         = nbits_E + nbits_P + nbits_V + nbits_LP ;
+ratebitpersample    = nbits_total / length(x) ;                     % bit   / sample 
+ratebitperseconde   = nbits_total / (ms) ;                          % kbits / sec
+
+    % GAIN QUANTIZATION
+a = histogram(log(E), 2^nbits_E) ;
+m = mean(a.BinEdges) ;
+xmax = max(a.BinEdges)-m ;
+idx = sq_enc(log(E), nbits_E, xmax, m, 0) ;
+Eq = sq_dec(idx, nbits_E, xmax, m) ;
+Eq = exp(Eq) ;
+
+    % VOICED/UNVOICED QUANTIZATION
+Vq = V ;
+
+    % PITCH QUANTIZATION
+a = histogram(P, 2^nbits_P) ;
+m = mean(a.BinEdges) ; 
+xmax = max(a.BinEdges)-m ; close all
+idx = sq_enc(P, nbits_P, xmax, m, 0) ;
+Pq = sq_dec(idx, nbits_P, xmax, m) ;
+% Pq = exp(Pq) ;
+
+    % LP PARAMETERS QUANTIZATION
+codeA = encodefilter(A, lsfCB1, lsfCB2) ;
+Aq = decodefilter(codeA, lsfCB1, lsfCB2) ;
+
+    % SYNTHESIS
+outputx = synthesis(Eq, Vq, A, Pq , ulen) ;
+
+    % PLOT
+delay = length(x) - length(outputx) ;
+figure,
+plot(x(delay+1:end)) ; hold on;
+plot(outputx) ;
+soundsc(outputx, Fs) ; pause(ms/1000) ;
+soundsc(x, Fs) ;
+
+
+    % compute SNR
+SNR = (1/length(x)) * sum((x(delay+1:end)-outputx).^2) ;
+
+
+
     
