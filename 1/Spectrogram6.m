@@ -86,13 +86,31 @@ xlabel('Time (ms)')
 close all
 clc
 
-    % Narrowband 
-bits = 9 ;
-myspectrogram(male_short, Fs, 2^bits, 2^(bits-3)) ;
+    % Wideband 
+flen = 3 ;              %ms
+alen = flen/1000*Fs ;   % size of analysis window
+ulen = 1 ;              % length of update
+figure
+myspectrogram(male_short, Fs, alen, ulen) ;
+title(['Wideband Spectogram length of window = ', int2str(flen), ' ms'])
 
-    % Wideband
-bits = 5 ;
-myspectrogram(male_short, Fs, 2^bits, 2^(bits-3)) ;
+    % Narrowband
+flen = 30 ;             %ms
+alen = flen/1000*Fs ;   % size of analysis window
+ulen = 1 ;              % length of update
+figure
+myspectrogram(male_short, Fs, alen, ulen) ;
+title(['Narrowband Spectogram length of window = ', int2str(flen), ' ms'])
 
+
+% figure
+% for flen = 1 : 60
+% alen = flen/1000*Fs ;   % size of analysis window
+% ulen =  floor((25/27) * flen + (20/9)) ;       % length of update
+% myspectrogram(male_short, Fs, alen, ulen) ;
+% title(['Wideband Spectogram length of window = ', int2str(flen), ' ms'])
+% pause(0.002)
+% end
+    
 
 

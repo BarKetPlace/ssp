@@ -44,7 +44,6 @@ for n= 1 : numwin - 1
 end
 
     % plot spectrogramme
-figure,
 colormap(bone)
 imagesc([0 1000*N/Fs], [Fs/2 0], flipud(-S));
 % c = colorbar;
