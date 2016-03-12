@@ -6,7 +6,7 @@ load assignment2.mat
 
 in = male8;%[-6:.01:6]'; %Signal must be a columns
 
-nbits_tab = 2:10; %Loop on the element of this array
+nbits_tab = 1:10; %Loop on the element of this array
 IN = ones(length(nbits_tab),1)*in';%contains the input in rows
 OUT = zeros(length(nbits_tab), length(in));%Output of USQ with nbits specified in nbits_tab
 
@@ -32,7 +32,8 @@ for im = 1:length(m_tab)%For all offset
         [ idx ] = sq_enc(in, n_bits, xmax, m, en_plots);
         
         %Convert the index into actual values
-        OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
+%         OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
+           OUT(i_bits,:) = sq_dec(idx, n_bits, xmax, m);
     end
     
     %Computes the distorsion
@@ -48,7 +49,7 @@ xlabel('Rate (bits)'); ylabel('Distorsion');
  title({'USQ'; 'Rate vs Distorsion'});
  
 % soundsc(in,8000);
-soundsc(OUT(3,:),8000);
+% soundsc(OUT(3,:),8000);
 
 % figure, plot(in,outq);
 % title(['Uniform Scalar Quantizer. ' num2str(n_bits) ' bits, m= ' num2str(m) ', xmax= ' num2str(xmax) ]);
