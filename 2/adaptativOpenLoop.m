@@ -8,12 +8,12 @@ x = male8;
 Fs = 8000;
 N = 30*Fs/1000; %Analysis window length
 U = N; %Update window length
-M = 30; % Orderfor linear prediction
+M = 10; % Orderfor linear prediction
 
 en_plots = 1;
 
 %Compute linear prediction error
-n_frames = floor((length(x)-N+U)/U); % Numeber of frame
+n_frames = floor((length(x)-N+U)/U); % Number of frame
 ms = (length(x) / Fs) * 1000 ;       % milliseconde
 x1 = linspace(0, ms, n_frames) ;
 A = zeros(n_frames, M+1);
@@ -26,21 +26,34 @@ for n=1:n_frames
     xf = x(s:e);
     
     % Linear prediction analysis:
-    [a,en] = lpc(xf,M);
+    a = lpc(xf,M); %The a coeff are directly the openloop system coefficients
     a = real(a);
     A(n,:) = a;
     % end lp analysis
-    Err(s:e,1) = filter(a,1,xf); %Filter with 1-A(Z)
+    
+    Err(s:e,1) = filter(A(n,:),1,xf); %Filter with 1-A(Z)
 %     Err(s:e) = xf - y(s:e);
     s = s + N;
     e = e + N;
 end
+%% Plot figure, and listen
+sigcorr = xcorr(x);
+errcorr = xcorr(Err);
+
+figure, %Observe the decorrelation
+plot(sigcorr/max(sigcorr)); hold on;
+plot(errcorr/max(errcorr), 'LineWidth', 2);
+ylabel('Auto-Correlation values');
+xlabel('Delay (in samples)'); 
+title('Auto-correlation function of the speech signal and error signal');
+legend('Speech signal','Error signal');
 
 soundsc(Err,Fs);
-figure,   
-  plot(x); hold on;
-  plot(Err);
-  legend('Input','Prediction error');
+%% Encoding of A and Err
+
+
+%% Decoding of A and Err
+
 
 %% Receiver
 s = 1; % Index for the start of the synthesis frame
