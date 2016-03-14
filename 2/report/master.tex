@@ -19,7 +19,7 @@
 \usepackage{float}
 \usepackage[hidelinks]{hyperref} %Liens intradoc et url
 \usepackage{titlepic}
-
+\usepackage{tikz} 
 %\usepackage{algorithm}
 %\usepackage{algorithmic} %Algo en pseudo code
 %\usepackage{algorithm2e} %for psuedo code
@@ -44,7 +44,18 @@
 \oddsidemargin -.5 cm
 
 %Titre
-\title{Speech Signal Processing\\Report\\Project n°2}
+%\title{Speech Signal Processing\\Report\\Project n°2}
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height 
+%\title{Final Report}
+
+\title{	 
+\textsc{EQ2320 - Speech Signal Processing}\\[25pt] 
+\horrule{1pt} \\[0.4cm] % Thin top horizontal rule
+\huge {Requirement Analyse and System Design} \\[0.4 cm] % The assignment title
+\Large{Final Report}\\[0.4 cm]
+\horrule{2pt} \\[0.2cm] % Thick bottom horizontal rule
+}
+
 \author{Félix Côte \and Antoine Honoré}
 
 
@@ -95,7 +106,6 @@
 %\titlepic{\includegraphics[scale=0.6]{kth-logo}}
 
 \begin{document}
-
 %%%%%%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%
 \maketitle
 \tableofcontents
