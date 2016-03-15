@@ -1,6 +1,7 @@
 \section{Speech Waveform Quantization}
 \subsection{Evaluation of the optimal k}
-In this part we design a Uniform Scalar Quantizer (USQ) that is adapted to the speech signal. For that we define \[xmax = k\sigma_x\] where $\sigma_x^2$ is the variance of the speech signal. This kis to be calculate for everybit rate we choose. The value of k for a bitrate R = 3 is 2.57. The figure \ref{optimalk} shows a plot of SNR = f(k). The SNR has been evaluate with the following formula \[ SNR = \frac{\sigma_x^2 }{\frac{1}{N}\sum_{n=1}^N(x_n - q_R(x_n))^2 } \] where N is the size of the input speech signal, $x_n$ is the input speech signal, $q_R(x_n)$ is the input signal quantized with a bitrate R. Here R=3.
+In this part we design a Uniform Scalar Quantizer (USQ) that is adapted to the speech signal. For that we define \[xmax = k\sigma_x\] where $\sigma_x^2$ is the variance of the speech signal. This kis to be calculate for everybit rate we choose. The value of k for a bitrate R = 3 is 3.4. The figure \ref{optimalk} shows a plot of SNR = f(k). The SNR has been evaluate with the following formula \[ SNR = \frac{\sigma_x^2 }{\frac{1}{N}\sum_{n=1}^N(x_n - q_R(x_n))^2 } \] where N is the size of the input speech signal, $x_n$ is the input speech signal, $q_R(x_n)$ is the input signal quantized with a bitrate R. Here R=3.
+
 
 
 \begin{figure}[h!]
