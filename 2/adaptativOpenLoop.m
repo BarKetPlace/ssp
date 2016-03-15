@@ -26,13 +26,15 @@ for n=1:n_frames
     xf = x(s:e);
     
     % Linear prediction analysis:
-    a = lpc(xf,M); %The a coeff are directly the openloop system coefficients
+    %The a coeff are directly the openloop system coefficients
+    % check the function lpc
+    a = lpc(xf,M); 
     a = real(a);
     A(n,:) = a;
     % end lp analysis
     
-    Err(s:e,1) = filter(A(n,:),1,xf); %Filter with 1-A(Z)
-%     Err(s:e) = xf - y(s:e);
+    Err(s:e,1) = filter(A(n,:),1,xf); %Here A*Xf = Err
+
     s = s + N;
     e = e + N;
 end
@@ -49,10 +51,10 @@ title('Auto-correlation function of the speech signal and error signal');
 legend('Speech signal','Error signal');
 
 soundsc(Err,Fs);
-%% Encoding of A and Err
+%% Encoding A and Err
 
 
-%% Decoding of A and Err
+%% Decoding A and Err
 
 
 %% Receiver
@@ -64,9 +66,7 @@ Err = Err(:);
 for n=1:n_frames
     Errf = Err(s:e);
     
-    xhat(s:e) = filter(1,A(n,:), Errf);
-    %y(s:e,1) = filter([1 -a(2:end)],1,xf);
-%     Err(s:e) = xf - y(s:e);
+    xhat(s:e) = filter(1,A(n,:), Errf); %Filter with 1/A
     s = s + U;
     e = e + U;
 end
@@ -74,5 +74,5 @@ figure, plot(xhat); hold on;
     plot(x);
     legend('xhat','x');
 
-  soundsc(xhat,Fs);
+soundsc(xhat,Fs);
   
