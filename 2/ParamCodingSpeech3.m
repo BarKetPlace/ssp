@@ -28,16 +28,18 @@ close all
 clc
 
     % create figures
-fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
+% fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
+fig1 = figure
 fig2 = figure('Position',[scrsz(3)/2 1 scrsz(3)/2 scrsz(4)]) ;
 
-for nbits = 8:-1:2    
+
+% for nbits = 8:-1:2    
         % display bits
     fprintf(['Bits = ', num2str(nbits), '\n'])
     
         % plot histogram
     figure(fig1) ;
-    a = histogram(E, 2^nbits) ;
+    a = histogram(E) ;
         % get m and xmax
     m = mean(a.BinEdges) ;
     xmax = max(a.BinEdges) - m ;
@@ -45,6 +47,7 @@ for nbits = 8:-1:2
     hold on
     plot([m-xmax, m-xmax], [0 max(a.Values)], 'red', [m, m], [0 max(a.Values)], 'red', [m+xmax, m+xmax], [0 max(a.Values)], 'red') ;
     text(m-xmax+5, max(a.Values)-5, 'm-xmax'), text(m+5, max(a.Values)-5, 'm'), text(m+xmax+5, max(a.Values)-5, 'm+xmax')
+    title('Histogram of Gain')
     hold off
 
         % quantize
@@ -65,7 +68,7 @@ for nbits = 8:-1:2
     soundsc(x_synth, Fs) ;
     pause(ms/1000)
         
-end
+% end
 
     % result
 fprintf('Can''t hear a difference after 4 bits\n')
@@ -76,42 +79,55 @@ close all
 clc
 
     % create figures
-fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
-fig2 = figure('Position',[scrsz(3)/2 1 scrsz(3)/2 scrsz(4)]) ;
+% fig1 = figure('Position',[1 1 scrsz(3)/2 scrsz(4)]) ;
+% fig2 = figure('Position',[scrsz(3)/2 1 scrsz(3)/2 scrsz(4)]) ;
+fig1 = figure,
+fig2 = figure,
 
-for nbits_E = 8:-1:2    
+for nbits_E = 8:-1:3  
         % display bits
     fprintf(['Bits = ', num2str(nbits_E), '\n'])
     
         % plot histogram
     figure(fig1) ;
-    a = histogram(log(E), 2^nbits_E) ;
+    a = histogram(log(E)) ;
         % get m and xmax
     m = mean(a.BinEdges) ;
     xmax = max(a.BinEdges)-m ;
+    
         % plot vertical lines
     hold on
     plot([m-xmax, m-xmax], [0 max(a.Values)], 'red', [m, m], [0 max(a.Values)], 'red', [m+xmax, m+xmax], [0 max(a.Values)], 'red') ;
     text(m-xmax, max(a.Values), 'm-xmax'), text(m, max(a.Values), 'm'), text(m+xmax, max(a.Values), 'm+xmax')
+    title('Histogram of the log of the gain')
     hold off
 
         % quantize
     idx = sq_enc(log(E), nbits_E, xmax, m, 0) ;
+    quantlogE = sq_dec(idx, nbits_E, xmax, m) ;
+    
+        % normal quantization
+    a = histogram(E) ;
+        % get m and xmax
+    m = mean(a.BinEdges) ;
+    xmax = max(a.BinEdges) - m ;
+            % quantize
+    idx = sq_enc(E, nbits_E, xmax, m, 0) ;
     quantE = sq_dec(idx, nbits_E, xmax, m) ;
 
         % plot the result and compare to quantization values and original
         % signal
     figure(fig2)
-    plot(E); hold on; plot(exp(quantE)) ; hold off ;
-    legend('Gain', 'Quantized gain')
-    title(['Quantization of log of gain with bits = ', num2str(nbits_E)])
+    plot(E); hold on; plot(exp(quantlogE)) ; plot(quantE) ; hold off ;
+    legend('Gain', 'Log quantization of gain', 'Direct quantization of gain')
+    title(['Quantizations of gain with bits = ', num2str(nbits_E)])
     
         % synthesis with parameters
-    x_synth = synthesis(exp(quantE), V, A, P, ulen) ;
-    
-        % play
-    soundsc(x_synth, Fs) ;
-    pause(ms/1000)
+%     x_synth = synthesis(exp(quantE), V, A, P, ulen) ;
+%     
+%         % play
+%     soundsc(x_synth, Fs) ;
+%     pause(ms/1000)
         
 end
 
@@ -240,14 +256,17 @@ close all
 clc
 
     % set quantization parameters
-nbits_E = 3 ;                       % 2 bits for gain
-nbits_P = 4 ;                       % 4 bits for pitch
+nbits_E = 8 ;                       % 2 bits for gain
+nbits_P = 8 ;                       % 4 bits for pitch
+SNR = zeros(nbits_E, nbits_P) ;
+for nbits_E=1:8
+    for nbits_P=1:8
 nbits_V = 1 ;                       % 1 bit for Voiced/Unvoiced
-nbits_LP = length(A) * 2 * M ;      % fixed number of bits for LP parameters quantization
+nbits_LP = 2 * M ;                  % fixed number of bits for LP parameters quantization
                                     % depends on number of window and LP order
 
     % get rate
-nbits_total         = nbits_E + nbits_P + nbits_V + nbits_LP ;
+nbits_total         = length(A)*(nbits_E + nbits_P + nbits_V + nbits_LP) ;
 ratebitpersample    = nbits_total / length(x) ;                     % bit   / sample 
 ratebitperseconde   = nbits_total / (ms) ;                          % kbits / sec
 
@@ -280,15 +299,29 @@ outputx = synthesis(Eq, Vq, A, Pq , ulen) ;
     % PLOT
 delay = length(x) - length(outputx) ;
 figure,
-plot(x(delay+1:end)) ; hold on;
+plot(x) ; hold on;
 plot(outputx) ;
-soundsc(outputx, Fs) ; pause(ms/1000) ;
-soundsc(x, Fs) ;
+% soundsc(outputx, Fs) ; pause(ms/1000) ;
+% soundsc(x, Fs) ;
 
+SNR(nbits_E,nbits_P) = 10*log10(var(x)/var(outputx)) ;
+    end
+end
+
+%%
 
     % compute SNR
-SNR = (1/length(x)) * sum((x(delay+1:end)-outputx).^2) ;
+% SNR = (1/length(x)) * sum((x(delay+1:end)-outputx).^2) ;
+SNR = zeros(delay+1,1) ;
+% figure
+for i= 0:delay
+%     plot(x(1+i:end-delay+i)) ; hold on;
+%     plot(outputx) ;
+%     axis([1000 2300 -8000 10000])
+%     hold off;
+%     pause(0.1)
 
-
-
+    SNR(i+1) = 10*log10((1/length(x)) * sum((x(1+i:end-delay+i)-outputx).^2)) ;
+      
+end
     
